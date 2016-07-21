@@ -1,2 +1,2 @@
-# elm-test-app
-Test app in Elm
+# elm-counter
+Simple counter in Elm
