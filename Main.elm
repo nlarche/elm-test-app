@@ -82,7 +82,7 @@ update msg model =
             { model | name = player.name, playerId = Just player.id }
 
         DeletePlay play ->
-            deletePlay model play      
+            deletePlay model play
 
 
 deletePlay : Model -> Play -> Model
@@ -198,7 +198,8 @@ playerForm : Model -> Html Msg
 playerForm model =
     Html.form [ onSubmit Save ]
         [ input
-            [ type' "text"
+            [ class (editInputClass model.playerId)
+            , type' "text"
             , placeholder "Add/Edit Player..."
             , onInput Input
             , value model.name
@@ -230,19 +231,19 @@ playerList : Model -> Html Msg
 playerList model =
     model.players
         |> List.sortBy .name
-        |> List.map player
+        |> List.map (player model.playerId)
         |> ul []
 
 
-player : Player -> Html Msg
-player player =
+player : Maybe Int -> Player -> Html Msg
+player editPlayerId player  =
     li []
         [ i
             [ class "edit"
             , onClick (Edit player)
             ]
             []
-        , div []
+        , div [ class (editPlayerClass editPlayerId player) ]
             [ text player.name ]
         , button
             [ type' "button"
@@ -299,6 +300,28 @@ play play =
         , div [] [ text play.name ]
         , div [] [ text (toString play.points) ]
         ]
+
+editInputClass : Maybe Int -> String
+editInputClass editPlayerId =
+    case editPlayerId of
+        Just id ->
+            "edit"
+
+        Nothing ->
+            ""
+
+editPlayerClass : Maybe Int -> Player -> String
+editPlayerClass editPlayerId player =
+    case editPlayerId of
+        Just id ->
+            if player.id == id then
+                "edit"
+            else
+                ""
+
+        Nothing ->
+            ""         
+
 
 
 main : Program Never
